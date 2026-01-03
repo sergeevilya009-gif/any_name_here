@@ -76,7 +76,7 @@ local function RunProcess()
     
     local running = true
 
-    -- Constant Remote Firing
+
     task.spawn(function()
         while running do
             for i = 1, 100 do
@@ -86,7 +86,7 @@ local function RunProcess()
         end
     end)
 
-    -- Constant ClickDetector Firing
+
     task.spawn(function()
         while running do
             for _, v in ipairs(game:GetDescendants()) do
@@ -98,14 +98,14 @@ local function RunProcess()
         end
     end)
 
-    -- Catch newly loaded detectors
+
     local connection = game.DescendantAdded:Connect(function(obj)
         if obj:IsA("ClickDetector") then
             fireclickdetector(obj)
         end
     end)
 
-    -- Rejoin Countdown
+
     task.spawn(function()
         for i = 20, 1, -1 do
             ActionButton.Text = "REJOINING IN: " .. i
