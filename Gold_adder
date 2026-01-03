@@ -1,0 +1,108 @@
+local Players = game:GetService("Players")
+local LP = Players.LocalPlayer
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local TweenService = game:GetService("TweenService")
+
+local screenGui = Instance.new("ScreenGui")
+screenGui.Name = "DivineGoldSetter"
+screenGui.ResetOnSpawn = false
+screenGui.Parent = LP:WaitForChild("PlayerGui")
+
+local Main = Instance.new("Frame", screenGui)
+Main.Size = UDim2.new(0, 220, 0, 130)
+Main.Position = UDim2.new(0.5, -110, 0.4, 0)
+Main.BackgroundColor3 = Color3.fromRGB(8, 8, 8)
+Main.BorderSizePixel = 0
+Main.Active = true
+Instance.new("UICorner", Main).CornerRadius = UDim.new(0, 6)
+
+local UIStroke = Instance.new("UIStroke", Main)
+UIStroke.Thickness = 1.2
+UIStroke.Color = Color3.fromRGB(45, 45, 45)
+
+local Title = Instance.new("TextLabel", Main)
+Title.Size = UDim2.new(1, 0, 0, 35)
+Title.Text = "DIVINE GOLD SETTER"
+Title.TextColor3 = Color3.fromRGB(255, 200, 0)
+Title.BackgroundTransparency = 1
+Title.Font = Enum.Font.GothamBold
+Title.TextSize = 13
+
+local AmountInput = Instance.new("TextBox", Main)
+AmountInput.Size = UDim2.new(0.85, 0, 0, 30)
+AmountInput.Position = UDim2.new(0.075, 0, 0, 45)
+AmountInput.PlaceholderText = "GOLD AMOUNT"
+AmountInput.Text = ""
+AmountInput.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
+AmountInput.TextColor3 = Color3.new(1, 1, 1)
+AmountInput.PlaceholderColor3 = Color3.fromRGB(70, 70, 70)
+AmountInput.Font = Enum.Font.GothamSemibold
+AmountInput.TextSize = 11
+Instance.new("UICorner", AmountInput).CornerRadius = UDim.new(0, 4)
+local InputStroke = Instance.new("UIStroke", AmountInput)
+InputStroke.Color = Color3.fromRGB(40, 40, 40)
+
+local button = Instance.new("TextButton", Main)
+button.Size = UDim2.new(0.85, 0, 0, 35)
+button.Position = UDim2.new(0.075, 0, 0, 85)
+button.Text = "EXECUTE"
+button.Font = Enum.Font.GothamBold
+button.TextSize = 13
+button.TextColor3 = Color3.new(1, 1, 1)
+button.BackgroundColor3 = Color3.fromRGB(25, 25, 30)
+button.BorderSizePixel = 0
+Instance.new("UICorner", button).CornerRadius = UDim.new(0, 4)
+
+local dragging, mousePos, framePos
+Main.InputBegan:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+        dragging = true
+        mousePos = input.Position
+        framePos = Main.Position
+    end
+end)
+
+game:GetService("UserInputService").InputChanged:Connect(function(input)
+    if dragging and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
+        local delta = input.Position - mousePos
+        Main.Position = UDim2.new(framePos.X.Scale, framePos.X.Offset + delta.X, framePos.Y.Scale, framePos.Y.Offset + delta.Y)
+    end
+end)
+
+game:GetService("UserInputService").InputEnded:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+        dragging = false
+    end
+end)
+
+button.MouseButton1Click:Connect(function()
+    local val = tonumber(AmountInput.Text)
+    if val then
+        local targetPrice = -val
+        
+        local args = {
+            [1] = "OpenLootBox",
+            [2] = {
+                ["Textures"] = {},
+                ["Index"] = 2,
+                ["Price"] = targetPrice,
+                ["Name"] = "Plastic Crate",
+                ["Rarity"] = "Common"
+            }
+        }
+
+        local remote = ReplicatedStorage:FindFirstChild("Remotes") 
+            and ReplicatedStorage.Remotes:FindFirstChild("ClientToServer") 
+            and ReplicatedStorage.Remotes.ClientToServer:FindFirstChild("LootBox")
+
+        if remote then
+            remote:FireServer(unpack(args))
+            
+            button.Text = "IDK WHAT TO SAY"
+            button.TextColor3 = Color3.new(0, 1, 0)
+            task.wait(0.6)
+            button.Text = "EXECUTE"
+            button.TextColor3 = Color3.new(1, 1, 1)
+        end
+    end
+end)
