@@ -32,7 +32,7 @@ InfoLabel.BackgroundTransparency = 1
 InfoLabel.Position = UDim2.new(0, 0, 0, 10)
 InfoLabel.Size = UDim2.new(1, 0, 0, 40)
 InfoLabel.Font = Enum.Font.Code
-InfoLabel.Text = "XENO EXECUTOR SUPPORT\nREADY"
+InfoLabel.Text = "XENO CLICK MODE\nREADY"
 InfoLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
 InfoLabel.TextSize = 14
 
@@ -42,7 +42,7 @@ ActionButton.BackgroundColor3 = Color3.fromRGB(200, 0, 0)
 ActionButton.Position = UDim2.new(0.1, 0, 0.55, 0)
 ActionButton.Size = UDim2.new(0.8, 0, 0, 40)
 ActionButton.Font = Enum.Font.GothamBold
-ActionButton.Text = "EXECUTE XENO LOOP"
+ActionButton.Text = "EXECUTE CLICK LOOP"
 ActionButton.TextColor3 = Color3.fromRGB(255, 255, 255)
 ActionButton.TextSize = 14
 
@@ -56,7 +56,7 @@ Notification.BackgroundTransparency = 0.4
 Notification.Position = UDim2.new(1, -310, 1, -60)
 Notification.Size = UDim2.new(0, 300, 0, 45)
 Notification.Font = Enum.Font.GothamMedium
-Notification.Text = "Xeno Support Loaded Successfully"
+Notification.Text = "Xeno Support (Click Only) Loaded"
 Notification.TextColor3 = Color3.fromRGB(255, 255, 255)
 Notification.TextSize = 12
 Notification.TextWrapped = true
@@ -65,7 +65,7 @@ Instance.new("UICorner", Notification).CornerRadius = UDim.new(0, 6)
 local function RunProcess()
     ActionButton.Active = false
     ActionButton.BackgroundColor3 = Color3.fromRGB(40, 0, 0)
-    InfoLabel.Text = "XENO PROCESS RUNNING"
+    InfoLabel.Text = "CLICKING & FIRING..."
     
     local remote = game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("QuestEvent")
     local args = {
@@ -86,21 +86,9 @@ local function RunProcess()
 
     task.spawn(function()
         while running do
-            local char = game.Players.LocalPlayer.Character
-            local root = char and char:FindFirstChild("HumanoidRootPart")
-            
             for _, v in ipairs(workspace:GetDescendants()) do
                 if v:IsA("ClickDetector") and fireclickdetector then
                     fireclickdetector(v)
-                end
-                
-                if v:IsA("TouchTransmitter") or v.Name == "TouchInterest" then
-                    local parentPart = v.Parent
-                    if parentPart and parentPart:IsA("BasePart") and root and firetouchinterest then
-                        firetouchinterest(root, parentPart, 0)
-                        task.wait()
-                        firetouchinterest(root, parentPart, 1)
-                    end
                 end
             end
             task.wait(0.5)
@@ -120,3 +108,4 @@ local function RunProcess()
 end
 
 ActionButton.MouseButton1Click:Connect(RunProcess)
+
