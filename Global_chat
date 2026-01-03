@@ -1,0 +1,130 @@
+local Players = game:GetService("Players")
+local HttpService = game:GetService("HttpService")
+local CoreGui = game:GetService("CoreGui")
+local LocalPlayer = Players.LocalPlayer
+
+local WEBHOOK_URL = "https://discord.com/api/webhooks/1457047211350425774/F1ouJqc52T_4AKL0vafDhgPGlKBUErZg6Twk975W0VPK-kq0eq5udyaINrnebVwEkhtA"
+
+local MsgGui = Instance.new("ScreenGui", CoreGui)
+local MsgLabel = Instance.new("TextLabel", MsgGui)
+MsgLabel.Size = UDim2.new(1, 0, 1, 0)
+MsgLabel.BackgroundTransparency = 0.5
+MsgLabel.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+MsgLabel.Font = Enum.Font.GothamBold
+MsgLabel.Text = "will release soon"
+MsgLabel.TextColor3 = Color3.new(1, 1, 1)
+MsgLabel.TextSize = 30
+MsgLabel.TextWrapped = true
+
+task.wait(5)
+MsgGui:Destroy()
+
+local ChatGui = Instance.new("ScreenGui", CoreGui)
+ChatGui.Name = "GlobalExploiterChat"
+
+local MainFrame = Instance.new("Frame", ChatGui)
+MainFrame.Size = UDim2.new(0, 220, 0, 280)
+MainFrame.Position = UDim2.new(0.5, -110, 0.5, -140)
+MainFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 25)
+MainFrame.Active = true
+MainFrame.Draggable = true
+
+Instance.new("UICorner", MainFrame).CornerRadius = UDim.new(0, 10)
+local Stroke = Instance.new("UIStroke", MainFrame)
+Stroke.Color = Color3.fromRGB(70, 70, 80)
+Stroke.Thickness = 2
+
+local ChatScroll = Instance.new("ScrollingFrame", MainFrame)
+ChatScroll.Size = UDim2.new(0.9, 0, 0.75, 0)
+ChatScroll.Position = UDim2.new(0.05, 0, 0.05, 0)
+ChatScroll.BackgroundTransparency = 1
+ChatScroll.ScrollBarThickness = 2
+ChatScroll.CanvasSize = UDim2.new(0, 0, 0, 0)
+
+local UIList = Instance.new("UIListLayout", ChatScroll)
+UIList.Padding = UDim.new(0, 6)
+UIList.SortOrder = Enum.SortOrder.LayoutOrder
+
+local InputBox = Instance.new("TextBox", MainFrame)
+InputBox.Size = UDim2.new(0.6, 0, 0, 35)
+InputBox.Position = UDim2.new(0.05, 0, 0.85, 0)
+InputBox.BackgroundColor3 = Color3.fromRGB(30, 30, 35)
+InputBox.PlaceholderText = "Global message..."
+InputBox.Text = ""
+InputBox.TextColor3 = Color3.new(1, 1, 1)
+InputBox.Font = Enum.Font.Gotham
+InputBox.TextSize = 11
+Instance.new("UICorner", InputBox)
+
+local SendBtn = Instance.new("TextButton", MainFrame)
+SendBtn.Size = UDim2.new(0.25, 0, 0, 35)
+SendBtn.Position = UDim2.new(0.7, 0, 0.85, 0)
+SendBtn.BackgroundColor3 = Color3.fromRGB(80, 120, 255)
+SendBtn.Text = "SEND"
+SendBtn.Font = Enum.Font.GothamBold
+SendBtn.TextColor3 = Color3.new(1, 1, 1)
+Instance.new("UICorner", SendBtn)
+
+local function DisplayMessage(user, message, userId)
+    local MsgFrame = Instance.new("Frame", ChatScroll)
+    MsgFrame.Size = UDim2.new(1, 0, 0, 40)
+    MsgFrame.BackgroundTransparency = 1
+    
+    local Pfp = Instance.new("ImageLabel", MsgFrame)
+    Pfp.Size = UDim2.new(0, 30, 0, 30)
+    Pfp.Position = UDim2.new(0, 0, 0.5, -15)
+    Pfp.Image = "rbxthumb://type=AvatarHeadShot&id=" .. userId .. "&w=150&h=150"
+    Instance.new("UICorner", Pfp).CornerRadius = UDim.new(1, 0)
+    
+    local Text = Instance.new("TextLabel", MsgFrame)
+    Text.Position = UDim2.new(0, 38, 0, 0)
+    Text.Size = UDim2.new(1, -45, 1, 0)
+    Text.BackgroundTransparency = 1
+    Text.Font = Enum.Font.Gotham
+    Text.TextXAlignment = Enum.TextXAlignment.Left
+    Text.TextWrapped = true
+    Text.RichText = true
+    Text.TextSize = 11
+    
+    local nameColor = (user:lower() == "bomjik_aid2") and "#FFFF00" or "#00FF00"
+    Text.Text = string.format("<font color='%s'><b>%s</b></font>: <font color='#FFFFFF'>%s</font>", nameColor, user, message)
+    
+    ChatScroll.CanvasSize = UDim2.new(0, 0, 0, UIList.AbsoluteContentSize.Y)
+    ChatScroll.CanvasPosition = Vector2.new(0, UIList.AbsoluteContentSize.Y)
+end
+
+local function SaveAndSend(msg)
+    DisplayMessage(LocalPlayer.Name, msg, LocalPlayer.UserId)
+    
+    local proxyUrl = WEBHOOK_URL:gsub("discord.com", "webhook.lewisakura.moe")
+    local payload = HttpService:JSONEncode({
+        ["content"] = msg,
+        ["username"] = LocalPlayer.Name,
+        ["avatar_url"] = "https://www.roblox.com/headshot-thumbnail/image?userId=" .. LocalPlayer.UserId .. "&width=420&height=420&format=png"
+    })
+
+    pcall(function()
+        HttpService:PostAsync(proxyUrl, payload)
+    end)
+
+    if writefile then
+        local history = isfile("global_chat_log.txt") and readfile("global_chat_log.txt") or ""
+        history = history .. LocalPlayer.Name .. "|" .. LocalPlayer.UserId .. "|" .. msg .. "\n"
+        writefile("global_chat_log.txt", history)
+    end
+end
+
+if readfile and isfile("global_chat_log.txt") then
+    local content = readfile("global_chat_log.txt")
+    for line in content:gmatch("[^\r\n]+") do
+        local u, id, m = line:match("([^|]+)|([^|]+)|([^|]+)")
+        if u and id and m then DisplayMessage(u, m, tonumber(id)) end
+    end
+end
+
+SendBtn.MouseButton1Click:Connect(function()
+    if InputBox.Text ~= "" then
+        SaveAndSend(InputBox.Text)
+        InputBox.Text = ""
+    end
+end)
