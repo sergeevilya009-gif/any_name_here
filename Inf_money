@@ -7,14 +7,13 @@ local ActionButton = Instance.new("TextButton")
 local ButtonCorner = Instance.new("UICorner")
 local Notification = Instance.new("TextLabel")
 
-ScreenGui.Name = "QuestSystemUI"
-ScreenGui.Parent = game:GetService("CoreGui")
+ScreenGui.Name = "XenoQuestUI"
+ScreenGui.Parent = (game:GetService("CoreGui") or game:GetService("Players").LocalPlayer:WaitForChild("PlayerGui"))
 ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 
 MainFrame.Name = "MainFrame"
 MainFrame.Parent = ScreenGui
-MainFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 25)
-MainFrame.BorderSizePixel = 0
+MainFrame.BackgroundColor3 = Color3.fromRGB(15, 15, 20)
 MainFrame.Position = UDim2.new(0.5, -125, 0.5, -60)
 MainFrame.Size = UDim2.new(0, 250, 0, 120)
 MainFrame.Active = true
@@ -23,7 +22,7 @@ MainFrame.Draggable = true
 UICorner.CornerRadius = UDim.new(0, 10)
 UICorner.Parent = MainFrame
 
-UIStroke.Color = Color3.fromRGB(60, 60, 70)
+UIStroke.Color = Color3.fromRGB(255, 0, 0)
 UIStroke.Thickness = 2
 UIStroke.Parent = MainFrame
 
@@ -32,18 +31,18 @@ InfoLabel.Parent = MainFrame
 InfoLabel.BackgroundTransparency = 1
 InfoLabel.Position = UDim2.new(0, 0, 0, 10)
 InfoLabel.Size = UDim2.new(1, 0, 0, 40)
-InfoLabel.Font = Enum.Font.GothamBold
-InfoLabel.Text = "QUEST UTILITY\nREADY"
+InfoLabel.Font = Enum.Font.Code
+InfoLabel.Text = "XENO EXECUTOR SUPPORT\nREADY"
 InfoLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
 InfoLabel.TextSize = 14
 
 ActionButton.Name = "ActionButton"
 ActionButton.Parent = MainFrame
-ActionButton.BackgroundColor3 = Color3.fromRGB(80, 120, 255)
+ActionButton.BackgroundColor3 = Color3.fromRGB(200, 0, 0)
 ActionButton.Position = UDim2.new(0.1, 0, 0.55, 0)
 ActionButton.Size = UDim2.new(0.8, 0, 0, 40)
 ActionButton.Font = Enum.Font.GothamBold
-ActionButton.Text = "START LOOP"
+ActionButton.Text = "EXECUTE XENO LOOP"
 ActionButton.TextColor3 = Color3.fromRGB(255, 255, 255)
 ActionButton.TextSize = 14
 
@@ -57,7 +56,7 @@ Notification.BackgroundTransparency = 0.4
 Notification.Position = UDim2.new(1, -310, 1, -60)
 Notification.Size = UDim2.new(0, 300, 0, 45)
 Notification.Font = Enum.Font.GothamMedium
-Notification.Text = "Make your Graphics Quality 10"
+Notification.Text = "Xeno Support Loaded Successfully"
 Notification.TextColor3 = Color3.fromRGB(255, 255, 255)
 Notification.TextSize = 12
 Notification.TextWrapped = true
@@ -65,46 +64,48 @@ Instance.new("UICorner", Notification).CornerRadius = UDim.new(0, 6)
 
 local function RunProcess()
     ActionButton.Active = false
-    ActionButton.BackgroundColor3 = Color3.fromRGB(50, 50, 55)
-    InfoLabel.Text = "SYSTEMS ACTIVE"
+    ActionButton.BackgroundColor3 = Color3.fromRGB(40, 0, 0)
+    InfoLabel.Text = "XENO PROCESS RUNNING"
     
-    local remote = game:GetService("ReplicatedStorage").Remotes.QuestEvent
+    local remote = game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("QuestEvent")
     local args = {
         [1] = "StartQuest",
-        [2] = workspace.Quests.Pantheist
+        [2] = workspace:WaitForChild("Quests"):WaitForChild("Pantheist")
     }
     
     local running = true
 
-
     task.spawn(function()
         while running do
-            for i = 1, 100 do
+            for i = 1, 75 do 
                 remote:FireServer(unpack(args))
             end
             task.wait(0.01)
         end
     end)
 
-
     task.spawn(function()
         while running do
-            for _, v in ipairs(game:GetDescendants()) do
-                if v:IsA("ClickDetector") then
+            local char = game.Players.LocalPlayer.Character
+            local root = char and char:FindFirstChild("HumanoidRootPart")
+            
+            for _, v in ipairs(workspace:GetDescendants()) do
+                if v:IsA("ClickDetector") and fireclickdetector then
                     fireclickdetector(v)
                 end
+                
+                if v:IsA("TouchTransmitter") or v.Name == "TouchInterest" then
+                    local parentPart = v.Parent
+                    if parentPart and parentPart:IsA("BasePart") and root and firetouchinterest then
+                        firetouchinterest(root, parentPart, 0)
+                        task.wait()
+                        firetouchinterest(root, parentPart, 1)
+                    end
+                end
             end
-            task.wait(1)
+            task.wait(0.5)
         end
     end)
-
-
-    local connection = game.DescendantAdded:Connect(function(obj)
-        if obj:IsA("ClickDetector") then
-            fireclickdetector(obj)
-        end
-    end)
-
 
     task.spawn(function()
         for i = 20, 1, -1 do
@@ -113,7 +114,6 @@ local function RunProcess()
         end
         
         running = false
-        connection:Disconnect()
         local ts = game:GetService("TeleportService")
         ts:Teleport(game.PlaceId, game.Players.LocalPlayer)
     end)
