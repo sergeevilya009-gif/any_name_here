@@ -14,8 +14,8 @@ ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 MainFrame.Name = "MainFrame"
 MainFrame.Parent = ScreenGui
 MainFrame.BackgroundColor3 = Color3.fromRGB(15, 15, 20)
-MainFrame.Position = UDim2.new(0.5, -125, 0.5, -60)
-MainFrame.Size = UDim2.new(0, 250, 0, 120)
+MainFrame.Position = UDim2.new(0.5, -125, 0.5, -70) -- Adjusted for better centering
+MainFrame.Size = UDim2.new(0, 250, 0, 140) -- Slightly taller for text wrap
 MainFrame.Active = true
 MainFrame.Draggable = true
 
@@ -29,17 +29,19 @@ UIStroke.Parent = MainFrame
 InfoLabel.Name = "InfoLabel"
 InfoLabel.Parent = MainFrame
 InfoLabel.BackgroundTransparency = 1
-InfoLabel.Position = UDim2.new(0, 0, 0, 10)
-InfoLabel.Size = UDim2.new(1, 0, 0, 40)
+InfoLabel.Position = UDim2.new(0, 5, 0, 5)
+InfoLabel.Size = UDim2.new(1, -10, 0, 60)
 InfoLabel.Font = Enum.Font.Code
-InfoLabel.Text = "DOESNT WORK ON XENO CLICK \nREADY"
-InfoLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-InfoLabel.TextSize = 14
+-- Updated Text
+InfoLabel.Text = "DOESNT WORK ON LOW END EXECUTORS (XENO)"
+InfoLabel.TextColor3 = Color3.fromRGB(255, 50, 50) -- Made it a bit more 'warning' red
+InfoLabel.TextSize = 13
+InfoLabel.TextWrapped = true
 
 ActionButton.Name = "ActionButton"
 ActionButton.Parent = MainFrame
 ActionButton.BackgroundColor3 = Color3.fromRGB(200, 0, 0)
-ActionButton.Position = UDim2.new(0.1, 0, 0.55, 0)
+ActionButton.Position = UDim2.new(0.1, 0, 0.6, 0)
 ActionButton.Size = UDim2.new(0.8, 0, 0, 40)
 ActionButton.Font = Enum.Font.GothamBold
 ActionButton.Text = "EXECUTE CLICK LOOP"
@@ -56,9 +58,10 @@ Notification.BackgroundTransparency = 0.4
 Notification.Position = UDim2.new(1, -310, 1, -60)
 Notification.Size = UDim2.new(0, 300, 0, 45)
 Notification.Font = Enum.Font.GothamMedium
-Notification.Text = "Xeno Support (Click Only) Loaded"
+-- Updated Notification Text
+Notification.Text = "DOESNT WORK ON LOW END EXECUTORS (XENO)"
 Notification.TextColor3 = Color3.fromRGB(255, 255, 255)
-Notification.TextSize = 12
+Notification.TextSize = 11
 Notification.TextWrapped = true
 Instance.new("UICorner", Notification).CornerRadius = UDim.new(0, 6)
 
@@ -108,4 +111,3 @@ local function RunProcess()
 end
 
 ActionButton.MouseButton1Click:Connect(RunProcess)
-
