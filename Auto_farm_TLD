@@ -1,0 +1,64 @@
+local Players = game:GetService("Players")
+local player = Players.LocalPlayer
+local RS = game:GetService("ReplicatedStorage")
+
+local ScreenGui = Instance.new("ScreenGui", game:GetService("CoreGui"))
+local Main = Instance.new("Frame", ScreenGui)
+local Title = Instance.new("TextLabel", Main)
+local Toggle = Instance.new("TextButton", Main)
+local UIStroke = Instance.new("UIStroke", Main)
+
+local TARGET_POS = CFrame.new(5.97, 3.41, -2544.45)
+
+Main.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
+Main.Position = UDim2.new(0.5, -65, 0.5, -50)
+Main.Size = UDim2.new(0, 130, 0, 90)
+Main.Active, Main.Draggable = true, true
+Instance.new("UICorner", Main)
+
+UIStroke.Color = Color3.new(1, 1, 1)
+UIStroke.Thickness = 1.5
+UIStroke.Parent = Main
+
+Title.Size = UDim2.new(1, 0, 0, 40)
+Title.Text = "AUTO FARM"
+Title.TextColor3 = Color3.new(1, 1, 1)
+Title.Font = Enum.Font.GothamBold
+Title.TextSize = 14
+Title.BackgroundTransparency = 1
+Title.Parent = Main
+
+Toggle.Size = UDim2.new(0.8, 0, 0, 30)
+Toggle.Position = UDim2.new(0.1, 0, 0.55, 0)
+Toggle.Text = "START"
+Toggle.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+Toggle.TextColor3 = Color3.new(1, 1, 1)
+Toggle.Font = Enum.Font.GothamMedium
+Instance.new("UICorner", Toggle)
+
+local active = false
+
+Toggle.MouseButton1Click:Connect(function()
+    active = not active
+    Toggle.Text = active and "STOP" or "START"
+    Toggle.BackgroundColor3 = active and Color3.fromRGB(120, 0, 0) or Color3.fromRGB(40, 40, 40)
+    
+    if active then
+        task.spawn(function()
+            while active do
+                local ev = RS:FindFirstChild("Events") and RS.Events:FindFirstChild("RestartPlayer")
+                if ev then 
+                    ev:FireServer() 
+                end
+                
+                task.wait(0.3) 
+                
+                if player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
+                    player.Character.HumanoidRootPart.CFrame = TARGET_POS
+                end
+                
+                task.wait(0.3) 
+            end
+        end)
+    end
+end)
