@@ -32,7 +32,7 @@ InfoLabel.BackgroundTransparency = 1
 InfoLabel.Position = UDim2.new(0, 0, 0, 10)
 InfoLabel.Size = UDim2.new(1, 0, 0, 40)
 InfoLabel.Font = Enum.Font.Code
-InfoLabel.Text = "XENO CLICK MODE\nREADY"
+InfoLabel.Text = "DOESNT WORK ON XENO CLICK \nREADY"
 InfoLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
 InfoLabel.TextSize = 14
 
