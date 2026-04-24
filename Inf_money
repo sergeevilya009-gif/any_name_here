@@ -7,7 +7,7 @@ local ActionButton = Instance.new("TextButton")
 local ButtonCorner = Instance.new("UICorner")
 local Notification = Instance.new("TextLabel")
 
-ScreenGui.Name = "XenoQuestUI"
+ScreenGui.Name = "QuestUI"
 ScreenGui.Parent = (game:GetService("CoreGui") or game:GetService("Players").LocalPlayer:WaitForChild("PlayerGui"))
 ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 
